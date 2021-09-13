@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js"
+        integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+"
+        crossorigin="anonymous"></script>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    body {
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(#e66465, #9198e5);
+    }
+
+    .wrapper {
+        background-color: #fff;
+        margin: 120px auto;
+        max-width: 400px;
+        width: 100%;
+        border-radius: 5px;
+        padding: 25px;
+    }
+
+    .wrapper header {
+        font-size: 30px;
+        font-weight: bolder;
+    }
+
+    .wrapper .inputField {
+        display: flex;
+        height: 40px;
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .inputField input {
+        width: 85%;
+        border: 1px solid #ccc;
+        font-size: 17px;
+        border-radius: 3px;
+        padding-left: 15px;
+    }
+
+    .inputField button {
+        width: 45px;
+        height: 100%;
+        border: none;
+        background-color: #8e49e8;
+        color: azure;
+        font-size: 22px;
+        cursor: pointer;
+        border-radius: 3px;
+        margin-left: 5px;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .inputField button.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .wrapper .todoList {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .todoList li {
+        list-style: none;
+        background-color: #f2f2f2;
+        height: 45px;
+        line-height: 45px;
+        font-size: 20px;
+        border-radius: 3px;
+        margin-bottom: 8px;
+        padding: 0 15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .todoList span {
+        position: absolute;
+        right: -45px;
+        background-color: #e74c3c;
+        color: #fff;
+        width: 45px;
+        text-align: center;
+        border-radius: 0 3px 3px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .todoList li:hover span {
+        right: 0px;
+    }
+
+    .footer {
+        width: 100%;
+        margin-top: 20px;
+        align-items: center;
+    }
+
+    .footer button {
+        border: none;
+        background-color: #8e49e8;
+        color: azure;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 3px;
+        padding: 6px 10px;
+    }
+</style>
+
+<body>
+    <div class="wrapper">
+        <header>To Do List</header>
+        <div class="inputField">
+            <input type="text" placeholder="Add something">
+            <button>+</button>
+        </div>
+        <ul class="todoList">
+        </ul>
+
+        <div class="footer">
+            <span class="things"></span><span> things waiting to do</span>
+            
+        </div>
+    </div>
+</body>
+<script>
+    const inputBox = document.querySelector(".inputField input");
+    const addBtn = document.querySelector(".inputField button");
+    const todoList = document.querySelector(".todoList");
+    const things =document.querySelector(".things");
+    showTask();
+
+    inputBox.onkeyup = () => {
+        let userData = inputBox.value;
+        if (userData.trim() != 0) {
+            addBtn.classList.add("active");
+        }
+        else {
+            addBtn.classList.remove("active");
+        }
+    }
+
+    addBtn.onclick = () => {
+        let userData = inputBox.value;
+        let getLocalStorage = localStorage.getItem("New Todo");
+        if (getLocalStorage == null) {
+            listArr = [];
+        } else {
+            listArr = JSON.parse(getLocalStorage);
+        }
+        listArr.push(userData);
+        localStorage.setItem("New Todo", JSON.stringify(listArr));
+        showTask();
+    }
+
+    function showTask() {
+        let getLocalStorage = localStorage.getItem("New Todo");
+        if (getLocalStorage == null) {
+            listArr = [];
+        } else {
+            listArr = JSON.parse(getLocalStorage);
+        }
+        let newLiTag = '';
+        listArr.forEach((element, index) => {
+            newLiTag += `<li>${element}<span onclick="deleteTask(${index})";><i class="fas fa-trash"></i></span></li>`;
+            console.log(element, index);
+        });
+        todoList.innerHTML = newLiTag;
+        inputBox.value = '';
+        console.log('*************');
+        things.textContent=listArr.length;
+    }
+
+    function deleteTask(index) {
+        let getLocalStorage = localStorage.getItem("New Todo");
+        listArr=JSON.parse(getLocalStorage);
+        listArr.splice(index,1);
+        localStorage.setItem("New Todo", JSON.stringify(listArr));
+        showTask();
+    }
+</script>
+
+</html>
